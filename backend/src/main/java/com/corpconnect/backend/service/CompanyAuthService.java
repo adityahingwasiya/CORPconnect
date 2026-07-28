@@ -21,49 +21,47 @@ public class CompanyAuthService {
     }
 
     /**
-     * Registers a new company.
-     * 
-     * @param request The registration request containing company details
-     * @return The saved Company entity
-     * @throws RuntimeException if the email already exists
+      registers a new company
+      @param request The registration request containing company details
+      @return the saved company entity
+      @throws runtimeException if the email already exists
      */
     public Company registerCompany(CompanyRegisterRequest request) {
-        // Check if email already exists
+        // check if email exists already
         if (companyRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Email already exists");
         }
 
-        // Encode password using PasswordEncoder
+        // encode password using passwordencoder
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        // Create and save Company
+        // creating and saving company
         Company company = new Company();
         company.setName(request.getName());
         company.setEmail(request.getEmail());
         company.setPasswordHash(encodedPassword);
 
-        // Return saved Company
+        //return saved company
         return companyRepository.save(company);
     }
 
     /**
-     * Authenticates a company admin for login.
-     * 
-     * @param request The login request containing email and password
-     * @return The authenticated Company entity
-     * @throws RuntimeException if email is not found or password is invalid
+      Authenticates a company admin for login 
+      @param request The login request containing email and password
+      @return The authenticated company entity
+      @throws runtimeException if email is not found
      */
     public Company loginCompany(LoginRequest request) {
-        // Fetch company by email
+        // fetch company by email
         Company company = companyRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthenticationFailedException("Invalid email or password"));
 
-        // Match password using PasswordEncoder.matches()
+        // match password using passwordencoder match function
         if (!passwordEncoder.matches(request.getPassword(), company.getPasswordHash())) {
             throw new AuthenticationFailedException("Invalid email or password");
         }
 
-        // Return Company
+        // return company
         return company;
     }
 }
