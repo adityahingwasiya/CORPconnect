@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * Service for employee authentication operations.
- */
+  // service for employee authentication ope
 @Service
 public class EmployeeAuthService {
 
@@ -26,25 +24,24 @@ public class EmployeeAuthService {
     }
 
     /**
-     * Authenticates an employee for login.
-     *
-     * @param request The login request containing email and password
-     * @return The authenticated Employee entity
-     * @throws RuntimeException if email is not found or password is invalid
+      authenticates an employee for login
+      @param requesting  login request containing email and password
+      @return The authenticated employee entity
+      @throws runtimeException if email is not found or password is invalid
      */
     public Employee loginEmployee(LoginRequest request) {
         String email = request.getEmail();
 
         logger.info("Attempting employee login for email: {}", email);
 
-        // Fetch employee by email
+        // fetch employee by email
         Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     logger.warn("Employee login failed - no employee found with email: {}", email);
                     return new AuthenticationFailedException("Invalid email or password");
                 });
 
-        // Match password using PasswordEncoder.matches()
+        // match password using Passwordencoder matches function
         if (!passwordEncoder.matches(request.getPassword(), employee.getPasswordHash())) {
             logger.warn("Employee login failed - password mismatch for email: {}", email);
             throw new AuthenticationFailedException("Invalid email or password");
@@ -52,7 +49,7 @@ public class EmployeeAuthService {
 
         logger.info("Employee login successful for email: {}", email);
 
-        // Return Employee
+        // Return employee
         return employee;
     }
 }
